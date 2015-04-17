@@ -1,0 +1,4 @@
+services:
+    lsi_order.order_to_csv:
+        class: LSI\OrderBundle\Service\OrderToCsvService
+        arguments: ["%order_csv_dir%"]

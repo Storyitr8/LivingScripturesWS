@@ -1,0 +1,369 @@
+{% extends '::base.html.twig' %}
+
+{% block pageTitle %}Commission Report{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{{path('lsi.dashboard.dashboard.index')}}">Dashboard</a></li>
+    <li class="active"><span>{{ block('pageTitle') }}</span></li>
+{% endblock%}
+
+{% block pageContent %}
+    {% if app.user != null and is_granted('ROLE_MANAGER') %}
+        <div class="well hidden-print">
+            {{ form(form,{style:'inline'}) }}
+        </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">{{selectedRep.firstName}} {{selectedRep.lastName}} - Commissions Report (beta)</div>
+                <div class="panel-body">
+                    <table id="commission-report-table" class="table table-striped table-condensed commissions">
+                        <thead>
+                        <tr>
+                            <th>WK</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Order #</th>
+                            {% if showSlsm %}
+                                <th>SLSM</th>
+                            {% endif %}
+                            <th>Sets</th>
+                            <th>Upg</th>
+                            <th>DVDs</th>
+                            <th>Prcls</th>
+                            <th>Products</th>
+                            {% if showUpfront %}
+                                <th>UF-Comm</th>
+                            {% endif %}
+                            {% if showOverrideComm %}
+                                <td>OR-Comm</td>
+                            {% endif %}
+                            <th>Comm</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% set yearSets, yearUpg, yearDVDs, yearUFComm, yearORComm, yearComm, processedSets, curWeek = 0,0,0,0,0,0,0,0 %}
+                        {% for weekOrders in ordersForAllWeeks %}
+                            {% set weekSets, weekUpg, weekDVDs, weekUFComm, weekORComm, weekComm = 0,0,0,0,0,0 %}
+                            {% for order in weekOrders %}
+                                <tr>
+                                    <td class="com-row">{{order.week}}</td>
+                                    <td class="com-row">{{order.date|date('m/d/Y')}}</td>
+                                    <td class="com-row"><a href="../sales/index.php?action=add_edit&order_main_id={{order.orderNo}}">{{order.custLname}}, {{order.custFname|slice(0, 1)}}</a></td>
+                                    <td class="com-row">{{order.orderNo}}</td>
+                                    {% if showSlsm %}
+                                        <td class="com-row">{{order.repNameCode}}</td>
+                                    {% endif %}
+                                    <td class="com-row">{{order.sets|number_format(1)}}</td>
+                                    <td class="com-row">{{order.upgrades}}</td>
+                                    <td class="com-row">{{order.dvds}}</td>
+                                    <td class="com-row">{{order.parcels}}</td>
+                                    <td class="com-row">{{order.product|replace({' ':'&nbsp;'})|raw}}</td>
+                                    {% if showUpfront %}
+                                        <td class="com-row">${{order.upfrontPay|number_format(2)}}</td>
+                                    {% endif %}
+                                    {% if showOverrideComm %}
+                                        <td class="com-row">${{order.overrideComm|number_format(2)}}</td>
+                                    {% endif %}
+                                    <td class="com-row">${{order.baseComm}}</td>
+                                    <td class="com-row status {{order.status|statusToCssClass}} {{order.statusMessage|default(order.status)|statusToCssClass}}">{{order.statusMessage|default(order.status)|replace({' ':'&nbsp;'})|raw}}</td>
+                                </tr>
+                                {% set curWeek = order.week %}
+                                {% if order.product != 'UPFRONT PAYMENT' and order.repNameCode == '' %}
+                                    {% set weekSets = weekSets + order.sets %}
+                                    {% set weekUpg = weekUpg + order.upgrades %}
+                                    {% set weekDVDs = weekDVDs + order.dvds %}
+                                    {% set weekUFComm = weekUFComm + order.upfrontPay %}
+                                    {% set weekORComm = weekORComm + order.overrideComm %}
+                                    {% set weekComm = weekComm + order.baseComm %}
+                                    {% set yearSets = yearSets + order.sets %}
+                                    {% set yearUpg = yearUpg + order.upgrades %}
+                                    {% set yearDVDs = yearDVDs + order.dvds %}
+                                    {% set yearUFComm = yearUFComm + order.upfrontPay %}
+                                    {% set yearORComm = yearORComm + order.overrideComm %}
+                                    {% set yearComm = yearComm + order.baseComm %}
+                                {% elseif order.product != 'UPFRONT PAYMENT' and order.repNameCode != '' %}
+                                    {% set weekORComm = weekORComm + order.overrideComm %}
+                                    {% set yearORComm = yearORComm + order.overrideComm %}
+                                {% endif %}
+
+                                {% if order.status == 'PROCESSED' %}
+                                    {% set processedSets = processedSets + order.sets %}
+                                {% endif %}
+                            {% endfor %}
+                            <tr>
+                                <td class="com-weekly-total">{{ curWeek }}</td>
+                                <td class="com-weekly-total"></td>
+                                <td class="com-weekly-total">WEEKLY TOTAL</td>
+                                <td class="com-weekly-total"></td>
+                                {% if showSlsm %}
+                                    <th class="com-weekly-total"></th>
+                                {% endif %}
+                                <td class="com-weekly-total">{{weekSets}}</td>
+                                <td class="com-weekly-total">{{weekUpg}}</td>
+                                <td class="com-weekly-total">{{weekDVDs}}</td>
+                                <td class="com-weekly-total"></td>
+                                <td class="com-weekly-total"></td>
+                                {% if showUpfront %}
+                                    <td class="com-weekly-total">${{weekUFComm|number_format(2)}}</td>
+                                {% endif %}
+                                {% if showOverrideComm %}
+                                    <td class="com-weekly-total">${{weekORComm|number_format(2)}}</td>
+                                {% endif %}
+                                <td class="com-weekly-total">${{weekComm|number_format(2)}}</td>
+                                <td class="com-weekly-total"></td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td class="com-weekly-total">{{ curWeek }}</td>
+                            <td class="com-weekly-total"></td>
+                            <td class="com-weekly-total">YTD TOTALS</td>
+                            <td class="com-weekly-total"></td>
+                            {% if showSlsm %}
+                                <th class="com-weekly-total"></th>
+                            {% endif %}
+                            <td class="com-weekly-total">{{yearSets}}</td>
+                            <td class="com-weekly-total">{{yearUpg}}</td>
+                            <td class="com-weekly-total">{{yearDVDs}}</td>
+                            <td class="com-weekly-total"></td>
+                            <td class="com-weekly-total"></td>
+                            {% if showUpfront %}
+                                <td class="com-weekly-total">${{yearUFComm|number_format(2)}}</td>
+                            {% endif %}
+                            {% if showOverrideComm %}
+                                <td class="com-weekly-total">${{yearORComm|number_format(2)}}</td>
+                            {% endif %}
+                            <td class="com-weekly-total">${{yearComm|number_format(2)}}</td>
+                            <td class="com-weekly-total"></td>
+                        </tr>
+                        <tr>
+                            <td class="com-weekly-total"></td>
+                            <td class="com-weekly-total"></td>
+                            <td class="com-weekly-total">MY PROCESSED SETS</td>
+                            <td class="com-weekly-total"></td>
+                            {% if showSlsm %}
+                                <th class="com-weekly-total"></th>
+                            {% endif %}
+                            <td class="com-weekly-total">{{userProcessedSets}}</td>
+                            <td class="com-weekly-total"></td>
+                            <td class="com-weekly-total"></td>
+                            <td class="com-weekly-total"></td>
+                            <td class="com-weekly-total"></td>
+                            {% if showUpfront %}
+                                <td class="com-weekly-total"></td>
+                            {% endif %}
+                            {% if showOverrideComm %}
+                                <td class="com-weekly-total"></td>
+                            {% endif %}
+                            <td class="com-weekly-total"></td>
+                            <td class="com-weekly-total"></td>
+                        </tr>
+                        {% if teamProcessedSets %}
+                            <tr>
+                                <td class="com-weekly-total">{{curWeek}}</td>
+                                <td class="com-weekly-total"></td>
+                                <td class="com-weekly-total">TEAM PROCESSED SETS</td>
+                                <td class="com-weekly-total"></td>
+                                {% if showSlsm %}
+                                    <th class="com-weekly-total"></th>
+                                {% endif %}
+                                <td class="com-weekly-total">{{teamProcessedSets}}</td>
+                                <td class="com-weekly-total"></td>
+                                <td class="com-weekly-total"></td>
+                                <td class="com-weekly-total"></td>
+                                <td class="com-weekly-total"></td>
+                                {% if showUpfront %}
+                                    <td class="com-weekly-total"></td>
+                                {% endif %}
+                                {% if showOverrideComm %}
+                                    <td class="com-weekly-total"></td>
+                                {% endif %}
+                                <td class="com-weekly-total"></td>
+                                <td class="com-weekly-total"></td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Weekly Checks</div>
+                <div class="panel-body">
+                    <table class="table table-striped table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for check in weeklyChecks %}
+                            <tr>
+                                <td>{{check.date|date('m/d/Y')}}</td>
+                                <td>${{check.amount|number_format(2)}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Contest &amp; Bonuses</div>
+                <div class="panel-body">
+                    <table class="table table-condensed table-striped">
+                        <tbody>
+                        {% set yearBonusTotal = 0 %}
+                        {% for index,bonusType in bonuses %}
+                            {% set yearBonusTypeTotal = 0 %}
+                            <tr>
+                                <td class="bonuses-header">
+                                    {% if index == 1 %}
+                                        Rent Subsidy
+                                    {% elseif index == 2 %}
+                                        Weekly Contests
+                                    {% elseif index == 3 %}
+                                        Money Received
+                                    {% endif %}
+                                </td>
+                                <td class="bonuses-header"></td>
+                                <td class="bonuses-header">Amount</td>
+                            </tr>
+                            {% for bonus in bonusType %}
+                                <tr>
+                                    <td class="bonuses-row">{{bonus.date|date('m/d/Y')}}</td>
+                                    <td class="bonuses-row">{{bonus.desc}}</td>
+                                    <td class="bonuses-row">${{bonus.amt|number_format(2)}}</td>
+                                </tr>
+                                {% set yearBonusTypeTotal = yearBonusTypeTotal + bonus.amt %}
+                                {% set yearBonusTotal = yearBonusTotal + bonus.amt %}
+                            {% endfor %}
+                            <tr>
+                                <td class="bonuses-totals"></td>
+                                <td class="bonuses-totals">YTD Total</td>
+                                <td class="bonuses-totals">${{yearBonusTypeTotal|number_format(2)}}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td class="bonuses-grand-total"></td>
+                            <td class="bonuses-grand-total">YTD Totals (Bonuses/Other)</td>
+                            <td class="bonuses-grand-total">${{yearBonusTotal|number_format(2)}}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Expenses</div>
+                <div class="panel-body">
+                    <table class="table table-condensed table-striped">
+                        <tbody>
+                        {% set expenseTotal = 0 %}
+                        {% for index,expenseType in expenses %}
+                            {% set sectionTotal = 0 %}
+                            <tr>
+                                <td class="expenses-header">
+                                    {% if index == 'A' %}
+                                        Supplies
+                                    {% elseif index == 'B' %}
+                                        Apartment Expenses
+                                    {% elseif index == 'C' %}
+                                        Extra Bonuses Charges
+                                    {% elseif index == 'D' %}
+                                        Missing SSN
+                                    {% elseif index == 'Z' %}
+                                        Other
+                                    {% endif %}
+                                </td>
+                                <td class="expenses-header"></td>
+                                <td class="expenses-header">Amount</td>
+                            </tr>
+                            {% for item in expenseType %}
+                                <tr>
+                                    <td class="expenses-row">{{item.date|date('m/d/Y')}}</td>
+                                    <td class="expenses-row">{{item.desc}}</td>
+                                    <td class="expenses-row">${{item.amt|number_format(2)}}</td>
+                                </tr>
+                                {% set sectionTotal = sectionTotal + item.amt %}
+                                {% set expenseTotal = expenseTotal + item.amt %}
+                            {% endfor %}
+                            <tr>
+                                <td class="expenses-totals"></td>
+                                <td class="expenses-totals">YTD Total</td>
+                                <td class="expenses-totals">${{sectionTotal|number_format(2)}}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td class="expenses-grand-total"></td>
+                            <td class="expenses-grand-total">YTD Total Expenses</td>
+                            <td class="expenses-grand-total">${{expenseTotal|number_format(2)}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Total Earnings</div>
+                <div class="panel-body">
+                    <table class="table table-striped table-condensed">
+                        <tbody>
+                        {% if showUpfront %}
+                            <tr>
+                                <td>Upfront Pay</td>
+                                <td>${{yearUFComm|number_format(2)}}</td>
+                            </tr>
+                            <tr>
+                                <td>Finishing Commissions</td>
+                                <td>${{(yearComm - yearUFComm)|number_format(2)}}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td>Total Commissions</td>
+                                <td>${{yearComm|number_format(2)}}</td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td>Bonuses &amp; Other</td>
+                            <td>${{yearBonusTotal|number_format(2)}}</td>
+                        </tr>
+                        <tr>
+                            <td>Expenses</td>
+                            <td>${{expenseTotal|number_format(2)}}</td>
+                        </tr>
+                        {% if showOverrideComm %}
+                            <tr>
+                                <td>Override Commissions</td>
+                                <td>${{yearORComm|number_format(2)}}</td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td class="total">Total Earnings</td>
+                            <td class="total">${{(yearComm + yearBonusTotal + expenseTotal)|number_format(2)}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerScripts %}
+    {{ parent() }}
+{% endblock %}

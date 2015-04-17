@@ -1,0 +1,64 @@
+security:
+    encoders:
+        #Symfony\Component\Security\Core\User\User: plaintext
+        #LSI\SystemBundle\Entity\UserMain: plaintext
+        LSI\UserBundle\Entity\User:
+            algorithm: bcrypt
+            cost: 12
+
+    role_hierarchy:
+        ROLE_MANAGER:       ROLE_USER
+        ROLE_ADMIN:         [ROLE_MANAGER, ROLE_ALLOWED_TO_SWITCH]
+
+    providers:
+#        in_memory:
+#            memory:
+#                users:
+#                    admin:
+#                        password: password
+#                        roles: 'ROLE_ADMIN'
+        users:
+            entity: { class: LSI\UserBundle\Entity\User, property: slsm_no }
+
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        api:
+            pattern: ^/api
+            security: false
+
+        salesrabbit_api:
+            pattern: ^/salesrabbit
+            security: false
+
+        sales_history:
+            pattern: ^/sales/history
+            security: false
+
+        login:
+            pattern:  ^/(login|forgot-password|reset-password|setup-password|register)$
+            security: false
+
+        main:
+            form_login:
+                check_path: /login_check
+                login_path: /login
+                always_use_default_target_path: false
+                default_target_path: /
+                use_referer: true
+                remember_me: true
+            remember_me:
+                key: "%secret%"
+                always_remember_me: true
+            logout:
+                path:   /logout
+                target: /
+                invalidate_session: true
+                delete_cookies:
+                    REMEMBERME: ~
+
+    access_control:
+        - { path: ^/*, roles: IS_AUTHENTICATED_REMEMBERED, requires_channel: https }

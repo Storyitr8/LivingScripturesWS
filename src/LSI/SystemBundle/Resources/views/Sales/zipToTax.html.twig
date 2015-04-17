@@ -1,0 +1,80 @@
+{% extends '::base.html.twig' %}
+
+{% block pageTitle %}{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="{{path('lsi.dashboard.dashboard.index')}}">Dashboard</a></li>
+<li class="active"><span>{{ block('pageTitle') }}</span></li>
+{% endblock%}
+
+{% block pageContent %}
+<div class="col-xs-3 col-sm-offset-3">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Zip To Tax</div>
+        <div class="panel-body">
+            {{form(form)}}
+        </div>
+    </div>
+</div>
+<div class="col-xs-3">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Tax Rate</div>
+        <div class="panel-body text-center">
+            {% if tax_rate != false %}
+                <h1>{{tax_rate*100}}%</h1>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modal %}
+<div class="modal fade" id="zip-to-tax-modal" tabindex="-1" role="dialog" >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Zip To Tax</h4>
+      </div>
+      <div class="modal-body">
+        {{form(form,{attr:{id:'tax-rate-form'},action:path('lsi.sales.sales.ziptotax') })}}
+        <div class="clearfix"></div>
+        <div id="tax-rate-wrapper" class="text-center"></div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script>
+    $('#tax-rate-form').on('submit',function(e){
+        e.preventDefault();
+        $('#tax-rate-wrapper').html('<span class="glyphicon glyphicon-refresh spinning"></span>');
+        startSpinning(0);
+        $.post(
+            $(this).attr('action'),
+            $(this).serialize(),
+            function(data){
+                var returnedData = $.parseJSON(data);
+                if(returnedData.tax_rate){
+                    $('#tax-rate-wrapper').html('<h1>'+parseFloat(returnedData.tax_rate)*100+'%</h1>');
+                }
+                else{
+                    $('#tax-rate-wrapper').html('Didnt recieve tax rate, did you enter a valid zipcode?');
+                }
+            }
+        ).fail(function(){
+            alert('Failed to get tax rate for provided zip code');
+        });
+    });
+    function startSpinning(degree){
+        $('.spinning').css({ WebkitTransform: 'rotate(' + degree + 'deg)'});
+        $('.spinning').css({ '-moz-transform': 'rotate(' + degree + 'deg)'});
+        timer = setTimeout(function() {
+            startSpinning(++degree);
+        },5);
+    }
+    $('#zip-to-tax-modal').modal();
+    $('#zip-to-tax-modal').on('shown.bs.modal',function(){
+        $('#form_zip').focus();
+    });
+</script>
+{% endblock %}

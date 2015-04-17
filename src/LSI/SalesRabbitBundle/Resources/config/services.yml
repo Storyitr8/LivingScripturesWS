@@ -1,0 +1,6 @@
+services:
+    kernel.listener.sales_rabbit_listener:
+        class: LSI\SalesRabbitBundle\Listener\SalesRabbitListener
+        arguments: ["@doctrine.orm.entity_manager","@lsi_order.order_to_csv"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: onKernelTerminate }

@@ -1,0 +1,229 @@
+<div class="top-reps">
+    <div class="title">
+        <h3>week's total sets</h3>
+    </div>
+    <div class="total-num">{{ all_users_week_sets }}</div>
+    <div class="title">
+        <h3>yesterday's total sets</h3>
+    </div>
+    <div class="total-num">{{ all_users_yesterday_sets }}</div>
+</div>
+<div class="top-reps">
+    <div class="title">
+        <h3>yesterday's top mngrs</h3>
+    </div>
+    {% for yesterdayTopManager in yesterdayTopManagers %}
+        {% if loop.first %}
+        <div class="top-rep">
+            {% if yesterdayTopManager.picture %}{% set picSrc = 'images/picture/'~yesterdayTopManager.picture ~'.'~ yesterdayTopManager.picture_file_type %}{% else %}{% set picSrc = 'images/no-profile.jpg' %}{% endif %}
+            <img src="images/picture/{{ picSrc }}" alt="{{yesterdayTopManager.first_name}} {{yesterdayTopManager.last_name}}" style="width:120px; height:160px;" />
+            <div class="name">{{ yesterdayTopManager.first_name }} {{ yesterdayTopManager.last_name}}</div>
+            <div class="team">{{yesterdayTopManager.team_name|default('(no team assigned)')}}</div>
+            <div class="sets-sold">{{ yesterdayTopManager.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% else %}
+        <div class="top-list">
+            <div class="name">{{ yesterdayTopManager.first_name }} {{ yesterdayTopManager.last_name}}</div>
+            <div class="sets-sold">{{ yesterdayTopManager.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+            <div class="team">{{yesterdayTopManager.team_name|default('(no team assigned)')}}</div>
+            <div class="clear"></div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="top-reps">
+    <div class="title">
+        <h3>yesterday's top reps</h3>
+    </div>
+    {% for yesterdayTopRep in yesterdayTopReps %}
+        {% if loop.first %}
+        <div class="top-rep">
+            {% if yesterdayTopRep.picture %}{% set picSrc = 'images/picture/'~yesterdayTopRep.picture ~'.'~ yesterdayTopRep.picture_file_type %}{% else %}{% set picSrc = 'images/no-profile.jpg' %}{% endif %}
+            <img src="images/picture/{{ picSrc }}" alt="{{yesterdayTopRep.first_name}} {{yesterdayTopRep.last_name}}" style="width:120px; height:160px;" />
+            <div class="name">{{ yesterdayTopRep.first_name }} {{ yesterdayTopRep.last_name}}</div>
+            <div class="team">{{yesterdayTopRep.team_name|default('(no team assigned)')}}</div>
+            <div class="sets-sold">{{ yesterdayTopRep.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% else %}
+        <div class="top-list">
+            <div class="name">{{ yesterdayTopRep.first_name }} {{ yesterdayyesterdayTopRepTopManager.last_name}}</div>
+            <div class="sets-sold">{{ yesterdayTopRep.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+            <div class="team">{{yesterdayTopRep.team_name|default('(no team assigned)')}}</div>
+            <div class="clear"></div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="top-reps">
+    <div class="title">
+        <h3>yesterday's top teams</h3>
+    </div>
+    {% for yesterdayTopTeam in yesterdayTopTeams %}
+        {% if loop.first %}
+        <div class="top-rep">
+            {% if yesterdayTopTeam.picture %}{% set picSrc = 'images/picture/'~yesterdayTopTeam.team_picture ~'.'~ yesterdayTopTeam.team_picture_file_type %}{% else %}{% set picSrc = 'images/no-profile.jpg' %}{% endif %}
+            <img src="images/picture/{{ picSrc }}" alt="{{yesterdayTopTeam.team_name}}" style="width:120px; height:160px;" />
+            <div class="name">{{ yesterdayTopRep.team_name }}</div>
+            <div class="team">{{yesterdayTopRep.team_name|default('(no team assigned)')}}</div>
+            <div class="sets-sold">{{ yesterdayTopRep.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% else %}
+        <div class="top-list">
+            <div class="name">{{ yesterdayTopRep.team_name[:18]}}</div>
+            <div class="sets-sold">{{ yesterdayTopRep.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="top-reps">
+    <div class="title">
+        <h3>week's top mngrs</h3>
+    </div>
+    {% for weekTopManager in weekTopManagers %}
+        {% if loop.first %}
+        <div class="top-rep">
+            {% if weekTopManager.picture %}{% set picSrc = 'images/picture/'~weekTopManager.picture ~'.'~ weekTopManager.picture_file_type %}{% else %}{% set picSrc = 'images/no-profile.jpg' %}{% endif %}
+            <img src="images/picture/{{ picSrc }}" alt="{{weekTopManager.first_name}} {{weekTopManager.last_name}}" style="width:120px; height:160px;" />
+            <div class="name">{{ weekTopManager.first_name }} {{ weekTopManager.last_name}}</div>
+            <div class="team">{{weekTopManager.team_name|default('(no team assigned)')}}</div>
+            <div class="sets-sold">{{ weekTopManager.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% else %}
+        <div class="top-list">
+            <div class="name">{{ weekTopManager.first_name }} {{ weekTopManager.last_name}}</div>
+            <div class="sets-sold">{{ weekTopManager.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+            <div class="team">{{weekTopManager.team_name|default('(no team assigned)')}}</div>
+            <div class="clear"></div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="top-reps">
+    <div class="title">
+        <h3>week's top reps</h3>
+    </div>
+    {% for weekTopRep in weekTopReps %}
+        {% if loop.first %}
+        <div class="top-rep">
+            {% if weekTopRep.picture %}{% set picSrc = 'images/picture/'~weekTopRep.picture ~'.'~ weekTopRep.picture_file_type %}{% else %}{% set picSrc = 'images/no-profile.jpg' %}{% endif %}
+            <img src="images/picture/{{ picSrc }}" alt="{{weekTopRep.first_name}} {{weekTopRep.last_name}}" style="width:120px; height:160px;" />
+            <div class="name">{{ weekTopRep.first_name }} {{ weekTopRep.last_name}}</div>
+            <div class="team">{{weekTopRep.team_name|default('(no team assigned)')}}</div>
+            <div class="sets-sold">{{ weekTopRep.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% else %}
+        <div class="top-list">
+            <div class="name">{{ weekTopRep.first_name }} {{ weekTopRep.last_name}}</div>
+            <div class="sets-sold">{{ weekTopRep.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+            <div class="team">{{weekTopRep.team_name|default('(no team assigned)')}}</div>
+            <div class="clear"></div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="top-reps">
+    <div class="title">
+        <h3>week's top teams</h3>
+    </div>
+    {% for weekTopTeam in weekTopTeams %}
+        {% if loop.first %}
+        <div class="top-rep">
+            {% if weekTopTeam.picture %}{% set picSrc = 'images/picture/'~weekTopTeam.team_picture ~'.'~ weekTopTeam.team_picture_file_type %}{% else %}{% set picSrc = 'images/no-profile.jpg' %}{% endif %}
+            <img src="images/picture/{{ picSrc }}" alt="{{weekTopTeam.team_name}}" style="width:120px; height:160px;" />
+            <div class="name">{{ weekTopTeam.team_name }}</div>
+            <div class="team">{{weekTopTeam.team_name|default('(no team assigned)')}}</div>
+            <div class="sets-sold">{{ weekTopTeam.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% else %}
+        <div class="top-list">
+            <div class="name">{{ weekTopTeam.team_name[:18]}}</div>
+            <div class="sets-sold">{{ weekTopTeam.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="top-reps">
+    <div class="title">
+        <h3>year's top mngrs</h3>
+    </div>
+    {% for yearTopManager in yearTopManagers %}
+        {% if loop.first %}
+        <div class="top-rep">
+            {% if yearTopManager.picture %}{% set picSrc = 'images/picture/'~yearTopManager.picture ~'.'~ yearTopManager.picture_file_type %}{% else %}{% set picSrc = 'images/no-profile.jpg' %}{% endif %}
+            <img src="images/picture/{{ picSrc }}" alt="{{yearTopManager.first_name}} {{yearTopManager.last_name}}" style="width:120px; height:160px;" />
+            <div class="name">{{ yearTopManager.first_name }} {{ yearTopManager.last_name}}</div>
+            <div class="team">{{yearTopManager.team_name|default('(no team assigned)')}}</div>
+            <div class="sets-sold">{{ yearTopManager.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% else %}
+        <div class="top-list">
+            <div class="name">{{ yearTopManager.first_name }} {{ yearTopManager.last_name}}</div>
+            <div class="sets-sold">{{ yearTopManager.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+            <div class="team">{{yearTopManager.team_name|default('(no team assigned)')}}</div>
+            <div class="clear"></div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="top-reps">
+    <div class="title">
+        <h3>year's top reps</h3>
+    </div>
+    {% for yearTopRep in yearTopReps %}
+        {% if loop.first %}
+        <div class="top-rep">
+            {% if yearTopRep.picture %}{% set picSrc = 'images/picture/'~yearTopRep.picture ~'.'~ yearTopRep.picture_file_type %}{% else %}{% set picSrc = 'images/no-profile.jpg' %}{% endif %}
+            <img src="images/picture/{{ picSrc }}" alt="{{yearTopRep.first_name}} {{yearTopRep.last_name}}" style="width:120px; height:160px;" />
+            <div class="name">{{ yearTopRep.first_name }} {{ yearTopRep.last_name}}</div>
+            <div class="team">{{yearTopRep.team_name|default('(no team assigned)')}}</div>
+            <div class="sets-sold">{{ yearTopRep.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% else %}
+        <div class="top-list">
+            <div class="name">{{ yearTopRep.first_name }} {{ yearTopRep.last_name}}</div>
+            <div class="sets-sold">{{ yearTopRep.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+            <div class="team">{{yearTopRep.team_name|default('(no team assigned)')}}</div>
+            <div class="clear"></div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="top-reps">
+    <div class="title">
+        <h3>year's top teams</h3>
+    </div>
+    {% for yearTopTeam in yearTopTeams %}
+        {% if loop.first %}
+        <div class="top-rep">
+            {% if yearTopTeam.picture %}{% set picSrc = 'images/picture/'~yearTopTeam.team_picture ~'.'~ yearTopTeam.team_picture_file_type %}{% else %}{% set picSrc = 'images/no-profile.jpg' %}{% endif %}
+            <img src="images/picture/{{ picSrc }}" alt="{{yearTopTeam.team_name}}" style="width:120px; height:160px;" />
+            <div class="name">{{ yearTopTeam.team_name }}</div>
+            <div class="team">{{yearTopTeam.team_name|default('(no team assigned)')}}</div>
+            <div class="sets-sold">{{ yearTopTeam.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% else %}
+        <div class="top-list">
+            <div class="name">{{ yearTopTeam.team_name[:18]}}</div>
+            <div class="sets-sold">{{ yearTopTeam.sets|number_format(1) }}</div>
+            <div class="clear"></div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>

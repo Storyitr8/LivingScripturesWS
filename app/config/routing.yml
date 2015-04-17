@@ -1,0 +1,34 @@
+lsi_commission:
+    resource: "@LSICommissionBundle/Controller"
+    type: annotation
+
+lsi_salesrabbit:
+    resource: "@LSISalesRabbitBundle/Controller/"
+    type: annotation
+
+lsi_order:
+    resource: "@LSIOrderBundle/Controller/"
+    type: annotation
+
+lsi_system:
+    resource: "@LSISystemBundle/Controller/"
+    type: annotation
+
+lsi_user:
+    resource: "@LSIUserBundle/Controller/"
+    type: annotation
+
+login_check:
+    pattern:   /login_check
+    options:
+        expose: true
+
+login:
+    pattern:   /login
+    options:
+        expose: true
+
+_logout:
+    pattern:   /logout
+    options:
+        expose: true

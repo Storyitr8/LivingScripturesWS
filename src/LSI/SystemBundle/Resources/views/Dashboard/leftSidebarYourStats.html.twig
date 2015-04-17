@@ -1,0 +1,34 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">your stats</div>
+    <div class="panel-body">
+        <div class="picture">
+            <img src="images/{{user.picture}}" alt="" />
+        </div>
+        <div class="name">
+            {{ user.firstName }} {{ user.lastName }}
+        </div>
+        <div class="team">
+            {{ team.teamName|default('(no team assigned)') }}
+        </div>
+        <table class="">
+            <tr>
+                <td>week's sets</td>
+                <td>{{ weekTotal }}</td>
+            </tr>
+            <tr>
+                <td>total sets</td>
+                <td>{{ userSets.total }}</td>
+            </tr>
+            <tr>
+                <td>proc. sets</td>
+                <td>{{ userSets.processed }}</td>
+            </tr>
+            {% if is_granted('ROLE_MANAGER') %}
+            <tr>
+                <td>team proc.</td>
+                <td>{{ teamProcessed }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+</div>

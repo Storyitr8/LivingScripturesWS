@@ -1,0 +1,149 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">your weekly stats</div>
+    <div class="panel-body">
+    {#<table>
+        <tr>
+            <td class="sched-head first"></td>
+            <td class="sched-head">hrs</td>
+            <td class="sched-head">drs</td>
+            <td class="sched-head">cnt</td>
+            <td class="sched-head">dmo</td>
+            <td class="sched-head">ref</td>
+            <td class="sched-head">cus</td>
+            <td class="sched-head">sets</td>
+            <td class="sched-head"></td>
+        </tr>
+
+        <tr>
+            <td class="sched-day first"><?php echo $key; ?></td>
+            <td class="sched-day"><?php echo $value['hours_worked']; ?></td>
+            <td class="sched-day"><?php echo $value['doors_knocked']; ?></td>
+            <td class="sched-day"><?php echo $value['contacts_made']; ?></td>
+            <td class="sched-day"><?php echo $value['demos_given']; ?></td>
+            <td class="sched-day"><?php echo $value['referrals_received']; ?></td>
+            <td class="sched-day"><?php echo $this_customers; ?></td>
+            <td class="sched-day"><?php echo $this_sets_sold; ?></td>
+        </tr>
+        <?php
+        else:
+        ?>
+        <tr>
+            <td class="sched-day first"><?php echo $key; ?></td>
+            <td class="sched-day"><input type="text" name="<?php echo $key;?>_hours_worked" size="1" style="border-color: #80C941;width: 20px;" value="0" onclick="this.select();" /></td>
+            <td class="sched-day"><input type="text" name="<?php echo $key;?>_doors_knocked" size="1" style="border-color: #80C941;width: 20px" value="0" onclick="this.select();" /></td>
+            <td class="sched-day"><input type="text" name="<?php echo $key;?>_contacts_made" size="1" style="border-color: #80C941;width: 20px" value="0" onclick="this.select();" /></td>
+            <td class="sched-day"><input type="text" name="<?php echo $key;?>_demos_given" size="1" style="border-color: #80C941;width: 20px" value="0" onclick="this.select();" /></td>
+            <td class="sched-day"><input type="text" name="<?php echo $key;?>_referrals_received" size="1" style="border-color: #80C941;width: 20px" value="0" onclick="this.select();" /></td>
+            <td class="sched-day"><?php echo $this_customers; ?></td>
+            <td class="sched-day"><?php echo $this_sets_sold; ?></td>
+            <td class="sched-day"><a class="add_day" day="<?php echo $key; ?>" href="">+</a></td>
+        </tr>
+        <?php
+        endif;
+        else:
+        ?>
+        <tr>
+            <td class="sched-day first"><?php echo $key; ?></td>
+            <td class="sched-day">0</td>
+            <td class="sched-day">0</td>
+            <td class="sched-day">0</td>
+            <td class="sched-day">0</td>
+            <td class="sched-day">0</td>
+            <td class="sched-day">0</td>
+            <td class="sched-day">0</td>
+        </tr>
+        <?php
+        endif;
+        $i++;
+        endforeach;
+        ?>
+    </table>
+
+</div>
+<script type="text/javascript">
+    $(function() {
+            $('.add_day').click(function(e){
+            e.preventDefault();
+            var day = $(this).attr('day');
+            var day_of_week = 0;
+            switch (day) {
+                case "mon":
+                    day_of_week = 1;
+                    break;
+                case "tues":
+                    day_of_week = 2;
+                    break;
+                case "wed":
+                    day_of_week = 3;
+                    break;
+                case "thurs":
+                    day_of_week = 4;
+                    break;
+                case "fri":
+                    day_of_week = 5;
+                    break;
+                case "sat":
+                    day_of_week = 6;
+                    break;
+            }
+            $('input[name=day_of_week]').val(day_of_week);
+            var regex = /day/;
+            var data = new Array();
+            $(this).parent().parent().find('input').each(function()
+            {
+                if ($(this).attr('name').search(regex))
+                {
+                    var name = $(this).attr('name').replace(day + "_", "");
+                    $('input[name=' + name + ']').val($(this).val());
+                }
+            });
+
+            $.post("/sales/ajax/today-stats.php", $("#daily_report").serialize(), function(data) {
+                alert(data);
+                if (data == 'Stats Updated'){
+                    window.location.reload();
+                }
+            });
+        });
+    });
+</script>
+<form id="daily_report">
+    <input type="hidden" name="day_of_week" value="<?php echo date('w') ?>" />
+    <input type="hidden" name="userid" value="<?php echo $userId;?>" />
+    <input type="hidden" name="week_start_date" value="<?php echo $week_start_date; ?>" />
+    <input type="hidden" name="current_reporting_week" value="<?php echo $week_id; ?>" />
+    <input type="hidden" name="hours_worked">
+    <input type="hidden" name="doors_knocked">
+    <input type="hidden" name="contacts_made">
+    <input type="hidden" name="demos_given">
+    <input type="hidden" name="update_date">
+    <input type="hidden" name="referrals_received">
+    <table>
+        <tr>
+            <td>Ward <?php echo (!$ward)? '<input type="text" name="ward" style="width: 50px" />': $ward; ?> </td>
+            <td style="padding-left: 5px;">Stake <?php echo (!$stake)? '<input type="text" name="stake" style="width: 50px"/>': $stake; ?> </td>
+            <td style="padding-left: 5px;">State
+                <?php
+                $create_select = new createSelect;
+                /*$stmt_state_prov="
+                SELECT    state_prov AS primary_key, state_prov_desc AS pk_description
+                FROM        ss.state_prov
+                ";
+                $create_select->createSelectFromSQL('state_prov',$state,$stmt_state_prov, $on_change='',$blank_desc='',$blank_value='');*/
+                $stmt_state_prov="
+                SELECT    t1.state_prov AS primary_key, t2.state_prov AS pk_description
+                FROM        ss.state_prov AS t1 join ss.state_prov AS t2 ON t1.state_prov = t2.state_prov
+                ";
+                $create_select->createSelectFromSQL('state_prov',$state,$stmt_state_prov, $on_change='',$blank_desc='',$blank_value='');
+                ?></td>
+        </tr>
+    </table>
+</form>
+
+<div class="personal-stats">
+    <a href="/sales/stats/summer_report.php"><img src="images/personal_stats.png" alt="Personal Stats" /></a>
+</div>
+#}
+
+    </div>
+</div>

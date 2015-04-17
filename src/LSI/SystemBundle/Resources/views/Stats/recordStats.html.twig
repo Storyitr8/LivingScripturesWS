@@ -1,0 +1,97 @@
+{% extends '::base.html.twig' %}
+
+{% block pageTitle %}Record Stats{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="{{path('lsi.dashboard.dashboard.index')}}">Dashboard</a></li>
+<li class="active"><span>{{ block('pageTitle') }}</span></li>
+{% endblock%}
+
+{% block pageContent %}
+
+{% if app.user != null and is_granted('ROLE_MANAGER') %}
+<div class="well well-sm">
+    <p class="pull-left">Record Stats&nbsp;&nbsp;&nbsp;</p>
+    {{form_start(selectForm,{attr:{class:"form-inline",action:path('lsi.system.stats.redirecttouserweek')} })}}
+
+        {% set curYear = "NOW"|date('Y') %}
+        <div class="form-group">
+        <label for="{{selectForm.week.vars.full_name}}">{{selectForm.week.vars.name|humanize}}</label>
+        <select name="{{selectForm.week.vars.full_name}}">
+            <option value="" disabled="disabled">{{curYear}}</option>
+            {% for option in selectForm.week.vars.choices %}
+                {% if curYear != option.data.summerSalesWeekStartDate|date('Y') %}
+                    {% set curYear = option.data.summerSalesWeekStartDate|date('Y') %}
+                    <option value="" disabled="disabled">{{option.data.summerSalesWeekStartDate|date('Y')}}</option>
+                {% endif %}
+                <option value="{{option.value}}"{% if selectForm.week.vars.data == option.value %} selected="selected"{% endif %}>{{option.label}}</option>
+            {% endfor %}
+        </select>
+        </div>
+
+        {% do selectForm.week.setRendered %}
+    {#
+        {% set inactiveUsers = '' %}
+        <div class="form-group">
+        <label for="{{selectForm.user.vars.full_name}}">{{selectForm.user.vars.name|humanize}}</label>
+        <select name="{{selectForm.user.vars.full_name}}">
+            <option value="" disabled="disabled">---- Active Users ----</option>
+
+            {% for option in selectForm.user.vars.choices %}
+                {% if option.data.isActive %}
+                    <option value="{{option.value}}"{% if selectForm.user.vars.data == option.value %} selected="selected"{% endif %}>{{option.label}}</option>
+                {% else %}
+                    {% set inactiveUsers %}
+                        {{inactiveUsers}}
+                        <option value="{{option.value}}"{% if selectForm.user.vars.data == option.value %} selected="selected"{% endif %}>{{option.label}}</option>
+                    {% endset %}
+                {% endif %}
+            {% endfor %}
+            {% if inactiveUsers != '' %}
+            <option value="" disabled="disabled">---- Inactive Users ----</option>
+            {{inactiveUsers}}
+            {% endif %}
+        </select>
+        </div>
+        {% do selectForm.user.setRendered %}
+        #}
+        {{form_rest(selectForm)}}
+        {{form_end(selectForm)}}
+</div>
+{% endif %}
+{{form_start(form,{attr:{class:"form"}, action:path('lsi.system.stats.savestatsforuserforweek',{userid:user.userid,summerSalesWeekId:week.summerSalesWeekId}) })}}
+    <table class="table table-condensed table-bordered table-responsive">
+        <thead>
+            <tr>
+                <th>Week Day</th>
+                <th>Hours</th>
+                <th>Doors</th>
+                <th>Contacts</th>
+                <th>Demos</th>
+                <th>Referals</th>
+                <th>Customers</th>
+                <th>Sets</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for dayOfWeek in form.repDailyReports %}
+                <tr>
+                    {% set dateString = year~"W"~weeknum~dayOfWeek.day_of_week.vars.value%}
+                    <th>
+                        {{dayOfWeek.day_of_week.vars.value|dayOfWeekToString}} {{dateString|date('m/d/Y')}}
+                        {{form_widget(dayOfWeek.day_of_week)}}
+                    </th>
+                    <td>{{form_widget(dayOfWeek.hours_worked)}}</td>
+                    <td>{{form_widget(dayOfWeek.doors_knocked)}}</td>
+                    <td>{{form_widget(dayOfWeek.contacts_made)}}</td>
+                    <td>{{form_widget(dayOfWeek.demos_given)}}</td>
+                    <td>{{form_widget(dayOfWeek.referrals_received)}}</td>
+                    <td>{{form_widget(dayOfWeek.customers)}}</td>
+                    <td>{{form_widget(dayOfWeek.sets_sold)}}</td>
+                </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{{form_rest(form)}}
+{{form_end(form)}}
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends '::base.html.twig' %}
+
+{% block pageTitle %}Dashboard{% endblock %}
+
+{% block breadcrumbs %}
+<li class="active">{{block('pageTitle')}}</li>
+{% endblock %}
+
+{% block pageContent %}
+<div class="row">
+    <div class="col-xs-3">
+        {# start left column #}
+        {#{{ render(controller('LSISystemBundle:Dashboard:leftSidebarYourStats')) }}#}
+        {#{{ render(controller('LSISystemBundle:Dashboard:leftSidebarYourProgress')) }}#}
+        <div class="panel panel-primary">
+            <div class="panel-heading">your team</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">last week's most</div>
+            <div class="panel-body"></div>
+        </div>
+        {# end left column #}
+    </div>
+    <div class="col-xs-6">
+        {# start middle column #}
+        <div class="panel panel-primary">
+            <div class="panel-heading">news & contests</div>
+            <div class="panel-body">
+                {{wordpress|raw}}
+            </div>
+        </div>
+        {# end middle column #}
+    </div>
+    <div class="col-xs-3">
+        {# start right column #}
+        <div class="panel panel-primary">
+            <div class="panel-heading">week's total sets</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">yesterday's total sets</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">yesterday's top mngrs</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">yesterday's top reps</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">yesterday's top teams</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">week's top managers</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">week's top reps</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">week's top teams</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">year's top managers</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">year's top reps</div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">year's top teams</div>
+            <div class="panel-body"></div>
+        </div>
+        {# end right column #}
+    </div>
+</div>
+{% endblock %}

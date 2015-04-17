@@ -1,0 +1,50 @@
+@media print{
+    a:link:after, a:visited:after {
+        content: "";
+    }
+}
+
+body{
+    padding-top: 60px;
+}
+
+.navbar-brand{
+    padding: 5px 15px;
+}
+
+#content #nav-above{
+    display: none;
+}
+
+/*commissions report*/
+.commissions .com-row.status{ background-color:#f79646; color:#ffffff; text-align: left; }
+.commissions .com-row.PROCESSED{ background-color:#0a5a25; }
+.commissions .com-row.CANCELLED,
+.commissions .com-row.CANCELED{ background-color:#c0504d;  }
+.commissions .com-row.POSTDATED{ background-color:#8064a2; }
+.commissions .com-row.ENTERED{ background-color:#4f81bd; }
+.commissions .com-row.UF-PAYMENT{ background-color:#000000; }
+.commissions .com-row.UPFRONT-PAID { background-color: #9bbb59; }
+.commissions .com-row.UF-PAID-CAN{ background-color: #9bbb59; }
+.commissions .com-row.REVERSED{ background-color:#888888; }
+
+/** new styles for the new commision report **/
+.commissions .com-row.status.processed,
+.commissions .com-row.status.process-credit,
+.commissions .com-row.status.processed-credit,
+.commissions .com-row.status.process-can{background-color:#0a5a25;}
+.commissions .com-row.status.cancelled,
+.commissions .com-row.status.canceled-pp,
+.commissions .com-row.status.canceled-nn,
+.commissions .com-row.status.canceled-pn,
+.commissions .com-row.status.canceled.entered-can,
+.commissions .com-row.status.canceled{background-color:#c0504d;}
+.commissions .com-row.status.postdated,
+.commissions .com-row.status.postdate{background-color:#8064a2;}
+.commissions .com-row.status.entered,
+.commissions .com-row.status.entered-can{background-color:#4f81bd;}
+.commissions .com-row.status.uf-payment{background-color:#000000;}
+.commissions .com-row.status.upfront-paid,
+.commissions .com-row.status.uf-paid-can{background-color:#9bbb59;}
+.commissions .com-row.status.reversed{background-color:#888888;}
+/********************/
